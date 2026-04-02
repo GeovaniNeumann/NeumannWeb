@@ -657,6 +657,196 @@ body {
   color: var(--color-neon);
 }
 
+/* Ajustes para o componente de Contato no mobile */
+@media (max-width: 768px) {
+  .contact-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+  
+  .contact-card-cta {
+    order: 1;
+    padding: 1.5rem;
+  }
+  
+  .contact-title {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .contact-subtitle {
+    text-align: center;
+    font-size: 1rem;
+  }
+  
+  .contact-form {
+    padding: 1.5rem;
+  }
+  
+  .contact-form h3 {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    font-size: 16px;
+    padding: 0.8rem 1rem;
+  }
+  
+  /* CORREÇÃO PRINCIPAL - CARDS ALINHADOS AO MEIO */
+  .contact-details {
+    order: 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .detail-item {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+    background: var(--color-glass-bg);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 12px;
+    transition: var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .detail-item:hover {
+    border-color: var(--color-neon);
+    transform: translateY(-5px);
+  }
+  
+  .detail-item i {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+    color: var(--color-neon);
+  }
+  
+  .detail-item h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-light);
+    font-weight: 600;
+  }
+  
+  .detail-item a,
+  .detail-item span {
+    font-size: 0.85rem;
+    word-break: break-word;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .detail-item a:hover {
+    color: var(--color-neon);
+  }
+  
+  .form-submit-btn {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 580px) {
+  .contact-details {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .detail-item {
+    max-width: 100%;
+    padding: 1rem;
+  }
+  
+  .detail-item i {
+    font-size: 1.5rem;
+  }
+  
+  .detail-item h4 {
+    font-size: 0.9rem;
+  }
+  
+  .detail-item a,
+  .detail-item span {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-title {
+    font-size: 1.5rem;
+  }
+  
+  .contact-card-cta {
+    padding: 1rem;
+  }
+  
+  .contact-form {
+    padding: 1rem;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    padding: 0.7rem 0.9rem;
+    font-size: 14px;
+  }
+  
+  .contact-details {
+    gap: 1rem;
+  }
+  
+  .detail-item {
+    padding: 0.9rem;
+  }
+  
+  .detail-item i {
+    font-size: 1.3rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .detail-item h4 {
+    font-size: 0.85rem;
+  }
+  
+  .detail-item a,
+  .detail-item span {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .contact-container {
+    gap: 3rem;
+  }
+  
+  .contact-details {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .contact-title {
+    font-size: 2rem;
+  }
+  
+  .detail-item {
+    padding: 1.2rem;
+  }
+}
+
 /* FOOTER */
 .footer {
   border-top: 1px solid var(--color-border-subtle);
@@ -771,7 +961,7 @@ body {
     width: 100%;
   }
   
-  
+  /* CORREÇÃO ESPECÍFICA PARA O TÍTULO NEUMANN WEB SOLUTIONS */
   .footer-col.footer-info h4,
   .footer-info .logo-link {
     text-align: center;
