@@ -664,12 +664,17 @@ section {
   position: relative;
   border-radius: var(--border-radius-2xl);
   overflow: hidden;
+  /* Estica para ocupar toda a altura do lado do texto */
+  align-self: stretch;
+  display: flex;
+  align-items: center;
 }
 
 .abstract-image {
   width: 100%;
-  height: 450px;
-  object-fit: cover;
+  height: 100%;          /* Ocupa o espaço do container */
+  min-height: 400px;     /* Garante altura mínima decente */
+  object-fit: contain;   /* Exibe a imagem completa, sem cortar */
   border-radius: var(--border-radius-2xl);
   border: 1px solid var(--color-border-subtle);
   display: block;
