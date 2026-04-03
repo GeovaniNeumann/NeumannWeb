@@ -61,7 +61,7 @@ export default function Header() {
             style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center' }}
           >
             <Image 
-              src="https://i.ibb.co/HTNgTwwn/Sem-nome-250-x-100-px-1-removebg-preview.png" 
+              src="https://i.ibb.co/p6rghMR8/Sem-nome-250-x-100-px-2-removebg-preview.png" 
               alt="Neumann Web Solutions"
               width={180} 
               height={72}
