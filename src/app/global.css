@@ -78,13 +78,31 @@
 }
 
 html, body {
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
   width: 100%;
 }
 
 html {
   scroll-behavior: smooth;
+  /* Scrollbar estilizada — Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neon) #0a0a0a;
+}
+
+/* Scrollbar estilizada — Chrome, Safari, Edge */
+html::-webkit-scrollbar {
+  width: 6px;
+}
+html::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+html::-webkit-scrollbar-thumb {
+  background: var(--color-neon);
+  border-radius: 3px;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neon-light);
 }
 
 body {
@@ -92,7 +110,6 @@ body {
   background-color: var(--color-primary);
   color: var(--color-text-light);
   line-height: 1.7;
-  overflow-x: hidden;
   width: 100%;
   position: relative;
 }
@@ -110,7 +127,6 @@ picture {
 
 /* Sections */
 section {
-  overflow-x: hidden;
   width: 100%;
   position: relative;
 }
@@ -124,7 +140,6 @@ section {
   width: 100%;
   margin: 0 auto;
   padding: 0 var(--container-padding);
-  overflow-x: hidden;
 }
 
 .section-padding {
@@ -502,7 +517,6 @@ section {
   position: relative;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
 }
 
 .hero-title {
@@ -1047,16 +1061,17 @@ section {
   content: '';
   position: absolute;
   top: 0;
-  left: -50%;
-  width: 200%;
+  left: 0;
+  width: 100%;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--color-neon), var(--color-neon-light), transparent);
   animation: shimmer 3s infinite;
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0%   { transform: scaleX(0); transform-origin: left;  opacity: 0; }
+  50%  { transform: scaleX(1); transform-origin: left;  opacity: 1; }
+  100% { transform: scaleX(0); transform-origin: right; opacity: 0; }
 }
 
 .footer-grid {
@@ -1130,7 +1145,7 @@ section {
   margin-bottom: 0.8rem;
   display: flex;
   align-items: center;
-}
+} 
 
 .footer-links ul li button,
 .footer-links ul li a {
@@ -1669,36 +1684,36 @@ section {
   
   .footer-grid {
     grid-template-columns: 1fr;
-    text-align: center;
+    text-align: left;
     gap: 2rem;
   }
   
   .footer-col {
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
   }
   
   .footer-col h4::after {
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    transform: none;
   }
   
   .footer-info p {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: left;
   }
   
   .footer-social-icons {
-    justify-content: center;
+    justify-content: flex-start;
   }
   
   .footer-links ul li {
-    justify-content: center;
+    justify-content: flex-start;
   }
   
   .footer-contact p {
-    justify-content: center;
+    justify-content: flex-start;
   }
 }
 

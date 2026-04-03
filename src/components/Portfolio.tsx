@@ -20,7 +20,7 @@ const projects = [
     reveal: 'reveal-fade-up',
   },
   {
-    href: 'https://jakaperfumaria.netlify.app/#',
+    href: 'https://diegomoreira-chi.vercel.app/',
     src: 'https://i.ibb.co/Df95LWgX/imh-jaka.png',
     alt: 'Projeto Landing Page',
     title: 'Land Page de Produtos Premium',

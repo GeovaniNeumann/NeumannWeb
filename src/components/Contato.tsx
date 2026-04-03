@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 const contactDetails = [
   {
-    icon: 'fas fa-phone-alt',
+    icon: 'fab fa-whatsapp',
     title: 'WhatsApp',
     content: '(41) 99755-2818',
     href: 'https://wa.me/5541997552818',
@@ -40,7 +40,8 @@ export default function Contato() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    // Usando 'name' em vez de 'id' para melhor compatibilidade com autocomplete
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,7 +88,9 @@ export default function Contato() {
               <div className="form-group">
                 <input
                   type="text"
+                  name="nome" // Atributo Name adicionado
                   id="nome"
+                  autoComplete="name" // Resolve o aviso do Chrome
                   placeholder="Seu nome"
                   required
                   value={form.nome}
@@ -97,7 +100,9 @@ export default function Contato() {
               <div className="form-group">
                 <input
                   type="email"
+                  name="email" // Atributo Name adicionado
                   id="email"
+                  autoComplete="email" // Resolve o aviso do Chrome
                   placeholder="Seu e-mail"
                   required
                   value={form.email}
@@ -107,7 +112,9 @@ export default function Contato() {
               <div className="form-group">
                 <input
                   type="tel"
+                  name="telefone" // Atributo Name adicionado
                   id="telefone"
+                  autoComplete="tel" // Resolve o aviso do Chrome
                   placeholder="Seu telefone (opcional)"
                   value={form.telefone}
                   onChange={handleChange}
@@ -115,6 +122,7 @@ export default function Contato() {
               </div>
               <div className="form-group">
                 <textarea
+                  name="mensagem"
                   id="mensagem"
                   placeholder="Sua mensagem"
                   rows={3}
@@ -130,11 +138,11 @@ export default function Contato() {
               >
                 {loading ? (
                   <>
-                    <i className="fas fa-spinner fa-spin" /> Redirecionando...
+                    <i className="fas fa-spinner fa-spin mr-2" /> Redirecionando...
                   </>
                 ) : (
                   <>
-                    <i className="fab fa-whatsapp" /> Enviar via WhatsApp
+                    <i className="fab fa-whatsapp mr-2" /> Enviar via WhatsApp
                   </>
                 )}
               </button>
@@ -151,7 +159,11 @@ export default function Contato() {
               <i className={d.icon} />
               <h4>{d.title}</h4>
               {d.href ? (
-                <a href={d.href} target="_blank" rel="noopener noreferrer">
+                <a 
+                  href={d.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer" // Melhora segurança e mitiga avisos de tracking
+                >
                   {d.content}
                 </a>
               ) : (
