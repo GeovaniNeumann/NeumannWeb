@@ -60,15 +60,9 @@ export default function Header() {
             onClick={() => scrollTo('#hero')}
             style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center' }}
           >
-            <Image 
-              src="https://i.ibb.co/p6rghMR8/Sem-nome-250-x-100-px-2-removebg-preview.png" 
-              alt="Neumann Web Solutions"
-              width={180} 
-              height={72}
-              priority
-              className="w-auto h-[40px] md:h-[50px] lg:h-[60px]"
-              style={{ objectFit: 'contain' }}
-            />
+           <span className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tighter uppercase bg-gradient-to-r from-[#14c5e4] to-[#33e6ff] bg-clip-text text-transparent">
+  <b>Neumann Web Solutions</b>
+</span>
           </button>
         </div>
 

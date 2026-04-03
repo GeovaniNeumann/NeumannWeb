@@ -282,15 +282,59 @@ section {
 }
 
 .logo-link {
-  margin-left: 0;
   text-decoration: none;
   display: inline-block;
+  margin-left: 0;
+  /* Tipografia de impacto */
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  position: relative;
+  transition: var(--transition-fast);
 }
 
 .logo-link span {
-  color: var(--color-neon);
+  /* Efeito de Gradiente Infinito */
+  background: linear-gradient(
+    90deg, 
+    var(--color-neon), 
+    var(--color-neon-light), 
+    #fff, 
+    var(--color-neon)
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.2rem;
+  
+  /* Animação suave de brilho passando */
+  animation: shine 5s linear infinite;
+  
+  /* Sombra de brilho neon (glow) */
+  filter: drop-shadow(0 0 8px rgba(20, 197, 228, 0.3));
 }
 
+/* Efeito ao passar o mouse */
+.logo-link:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 0 12px rgba(20, 197, 228, 0.6));
+}
+
+@keyframes shine {
+  to {
+    background-position: 300% center;
+  }
+}
+
+/* Ajuste para telas menores */
+@media (max-width: 768px) {
+  .logo-link {
+    font-size: 1.0rem;
+    margin-left: 0px; /* Mantém o ajuste que você pediu para o mobile */
+  }
+}
 /* Navegação */
 .nav {
   display: flex;
