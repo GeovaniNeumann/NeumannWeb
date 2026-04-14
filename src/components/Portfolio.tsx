@@ -4,12 +4,12 @@ import Image from 'next/image';
 
 const projects = [
   {
-    href: 'https://disti.netlify.app/',
-    src: 'https://i.ibb.co/7tLwvYVm/dsd.png',
-    alt: 'Projeto Distribuidora B2B/B2C',
-    title: 'Vitrine de Produtos Múltiplos',
-    desc: 'Plataforma de exposição B2B/B2C com design elegante e otimizada para a venda de diferentes categorias de produtos.',
-    reveal: 'reveal-slide-left',
+    href: 'https://cantinhodoartesanato.vercel.app/',
+    src: 'https://i.ibb.co/7tkGMvTY/Design-sem-nome-28.png',
+    alt: 'Projeto Cantinho das Bonecas',
+    title: 'Cantinho das Bonecas',
+    desc: 'Vitrine personalizada para exposição de bonecas artesanais, com foco em visual atraente e segmentação clara de produtos para revenda e varejo.',
+    reveal: 'reveal-slide-left'
   },
   {
     href: 'https://www.lughworld.com/',
