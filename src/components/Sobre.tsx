@@ -46,12 +46,13 @@ export default function Sobre() {
 
         <div className="about-image-content reveal-slide-right">
           <Image
-            src="https://i.ibb.co/CKskc4X5/Design-sem-nome-5.png"
+            src="/imgabout.webp"
             alt="Abordagem Neumann Web Solutions"
             className="abstract-image"
             width={600}
             height={450}
             style={{ objectFit: 'cover' }}
+            priority
           />
           <div className="glass-overlay" />
         </div>

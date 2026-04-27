@@ -82,7 +82,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>© 2025 Neumann Web Solutions. Todos os direitos reservados.</p>
+          <p>© 2026 Neumann Web Solutions. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

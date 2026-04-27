@@ -6,10 +6,10 @@ const services = [
     reveal: 'reveal-slide-left',
   },
   {
-    icon: 'fas fa-cogs',
-    title: 'Sistemas Web Customizados',
-    desc: 'Desenvolvimento de plataformas B2B/B2C, CRMs e ERPs sob medida para automação de processos.',
-    reveal: 'reveal-fade-up',
+    icon: 'fas fa-mobile-alt',
+    title: 'Aplicativos Mobile',
+    desc: 'Apps nativos e híbridos para iOS e Android, desenvolvidos com React Native e Flutter para máxima performance e experiência nativa.',
+    reveal: 'reveal-slide-left',
   },
   {
     icon: 'fas fa-chart-bar',
@@ -18,9 +18,9 @@ const services = [
     reveal: 'reveal-slide-right',
   },
   {
-    icon: 'fas fa-bullhorn',
-    title: 'Gestão de Mídias Sociais',
-    desc: 'Estratégia, criação de conteúdo e gestão de campanhas nas principais plataformas para aumentar o engajamento.',
+    icon: 'fas fa-shopping-cart',
+    title: 'E-commerce e Lojas Virtuais',
+    desc: 'Lojas online completas com gestão de produtos, pagamentos integrados e experiência de compra otimizada para conversão.',
     reveal: 'reveal-slide-left',
     delay: '0.2s',
   },

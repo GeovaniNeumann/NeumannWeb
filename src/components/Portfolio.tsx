@@ -27,6 +27,30 @@ const projects = [
     desc: 'Design emocional e persuasivo, focado na alta conversão para mix de produtos (perfumaria, presentes e bebidas).',
     reveal: 'reveal-slide-right',
   },
+  {
+    href: 'https://lacarprime.vercel.app/',
+    src: 'https://i.ibb.co/SDgdrnjc/Design-sem-nome-4.jpg',
+    alt: 'Projeto LA Car Center Prime',
+    title: 'LA Car Center Prime',
+    desc: 'Página para oficina mecânica com serviços, portfólio e formulário de contato.',
+    reveal: 'reveal-slide-left',
+  },
+  {
+    href: 'https://adrianaconfeiteira.vercel.app/',
+    src: 'https://i.ibb.co/Wvc3FSwV/Sem-nome-Post-para-Instagram-45-2.jpg',
+    alt: 'Projeto Adriana Bolos',
+    title: 'Adriana Bolos',
+    desc: 'Página para Confeitaria com catálogo de produtos, sobre e informações de contato.',
+    reveal: 'reveal-fade-up',
+  },
+  {
+    href: 'https://anderbrittopersonal.vercel.app/',
+    src: 'https://i.ibb.co/QF0yYdnF/Sem-nome-800-x-600-px-1.png',
+    alt: 'Projeto Anderson Brito',
+    title: 'Anderson Brito',
+    desc: 'Página para personal trainer com serviços, depoimentos e informações de contato.',
+    reveal: 'reveal-slide-right',
+  },
 ];
 
 export default function Portfolio() {
@@ -35,29 +59,24 @@ export default function Portfolio() {
       <div className="container">
         <h2 className="section-title reveal-fade-up">Projetos Recentes</h2>
         <div className="portfolio-grid">
-          {projects.map((p) => (
+          {projects.map((p, index) => (
             <a
-              key={p.href}
+              key={`${p.href}-${index}`}
               href={p.href}
               target="_blank"
               rel="noopener noreferrer"
               className={`portfolio-item ${p.reveal}`}
             >
-              <div className="portfolio-image-wrapper" style={{ position: 'relative', overflow: 'hidden' }}>
-                <Image src={p.src}
-              alt={p.alt}
-              width={600}
-              height={280}
-              // 1. Resolve o aviso de LCP (Prioridade de carregamento)
-              priority={true} 
-              // 2. Resolve o aviso de largura/altura modificada (Proporção)
-              style={{ 
-                objectFit: 'cover', 
-                width: '100%', 
-                height: 'auto' 
-              }}
-              className="transition-transform duration-500 hover:scale-110"
-            />
+              <div className="portfolio-image-wrapper">
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  priority={index < 2}
+                  style={{ objectFit: 'cover' }}
+                  className="portfolio-img"
+                />
               </div>
               <div className="item-overlay">
                 <h4>{p.title}</h4>

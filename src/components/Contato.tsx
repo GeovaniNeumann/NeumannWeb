@@ -18,7 +18,7 @@ const contactDetails = [
   {
     icon: 'fas fa-envelope',
     title: 'E-mail',
-    content: 'contato@neumannweb.com.br',
+    content: 'neumannwebsolutions@gmail.com',
     href: 'mailto:contato@neumannweb.com.br',
   },
   {

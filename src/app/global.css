@@ -85,12 +85,10 @@ html, body {
 
 html {
   scroll-behavior: smooth;
-  /* Scrollbar estilizada — Firefox */
   scrollbar-width: thin;
   scrollbar-color: var(--color-neon) #0a0a0a;
 }
 
-/* Scrollbar estilizada — Chrome, Safari, Edge */
 html::-webkit-scrollbar {
   width: 6px;
 }
@@ -300,7 +298,6 @@ section {
   text-decoration: none;
   display: inline-block;
   margin-left: 0;
-  /* Tipografia de impacto */
   font-size: 1.4rem;
   font-weight: 900;
   letter-spacing: -0.05em;
@@ -310,7 +307,6 @@ section {
 }
 
 .logo-link span {
-  /* Efeito de Gradiente Infinito */
   background: linear-gradient(
     90deg, 
     var(--color-neon), 
@@ -323,15 +319,10 @@ section {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-size: 1.2rem;
-  
-  /* Animação suave de brilho passando */
   animation: shine 5s linear infinite;
-  
-  /* Sombra de brilho neon (glow) */
   filter: drop-shadow(0 0 8px rgba(20, 197, 228, 0.3));
 }
 
-/* Efeito ao passar o mouse */
 .logo-link:hover {
   transform: scale(1.02);
   filter: drop-shadow(0 0 12px rgba(20, 197, 228, 0.6));
@@ -343,13 +334,13 @@ section {
   }
 }
 
-/* Ajuste para telas menores */
 @media (max-width: 768px) {
   .logo-link {
     font-size: 1.0rem;
-    margin-left: 0px; /* Mantém o ajuste que você pediu para o mobile */
+    margin-left: 0px;
   }
 }
+
 /* Navegação */
 .nav {
   display: flex;
@@ -495,6 +486,7 @@ section {
 }
 
 
+/* ============================================ */
 /* SEÇÕES ESPECÍFICAS */
 /* ============================================ */
 
@@ -669,7 +661,6 @@ section {
   position: relative;
   border-radius: var(--border-radius-2xl);
   overflow: hidden;
-  /* Estica para ocupar toda a altura do lado do texto */
   align-self: stretch;
   display: flex;
   align-items: center;
@@ -677,9 +668,9 @@ section {
 
 .abstract-image {
   width: 100%;
-  height: 100%;          /* Ocupa o espaço do container */
-  min-height: 400px;     /* Garante altura mínima decente */
-  object-fit: contain;   /* Exibe a imagem completa, sem cortar */
+  height: 100%;
+  min-height: 400px;
+  object-fit: contain;
   border-radius: var(--border-radius-2xl);
   border: 1px solid var(--color-border-subtle);
   display: block;
@@ -701,7 +692,10 @@ section {
   border-radius: 0 0 var(--border-radius-2xl) var(--border-radius-2xl);
 }
 
-/* Portfolio */
+/* ============================================ */
+/* PORTFOLIO — GALERIA CORRIGIDA                */
+/* ============================================ */
+
 .portfolio-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -717,18 +711,43 @@ section {
   text-decoration: none;
   border: 1px solid var(--color-border-subtle);
   max-width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.portfolio-item img {
+.portfolio-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(20, 197, 228, 0.4);
+}
+
+/*
+ * CORREÇÃO PRINCIPAL:
+ * Usamos aspect-ratio em vez de height fixa.
+ * position: relative é obrigatório para o Image fill do Next.js.
+ * A regra global "img { height: auto }" é sobrescrita aqui com !important
+ * para garantir que o fill funcione corretamente.
+ */
+.portfolio-image-wrapper {
+  position: relative;
+  overflow: hidden;
   width: 100%;
-  height: 280px;
-  object-fit: cover;
+  aspect-ratio: 16 / 9;
+}
+
+.portfolio-image-wrapper img,
+.portfolio-img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
   display: block;
   transition: transform 0.5s ease;
-  max-width: 100%;
 }
 
-.portfolio-item:hover img {
+.portfolio-item:hover .portfolio-image-wrapper img,
+.portfolio-item:hover .portfolio-img {
   transform: scale(1.08);
 }
 
@@ -741,7 +760,8 @@ section {
   background: linear-gradient(to top, rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.6) 60%, transparent);
   transform: translateY(20px);
   opacity: 0;
-  transition: var(--transition-fast);
+  transition: all 0.3s ease;
+  pointer-events: none;
 }
 
 .portfolio-item:hover .item-overlay {
@@ -760,9 +780,50 @@ section {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   line-height: 1.5;
+  margin: 0;
 }
 
+/* Portfolio — Responsividade */
+@media (max-width: 1024px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .item-overlay {
+    /* No mobile exibe sempre visível, sem precisar de hover */
+    transform: translateY(0);
+    opacity: 1;
+    padding: 1.5rem 1.2rem 1.2rem;
+    background: linear-gradient(to top, rgba(5, 5, 5, 0.9), rgba(5, 5, 5, 0.4) 70%, transparent);
+  }
+
+  .item-overlay h4 {
+    font-size: calc(var(--font-size-lg) * 0.9);
+  }
+
+  .item-overlay p {
+    font-size: calc(var(--font-size-sm) * 0.95);
+  }
+}
+
+@media (max-width: 480px) {
+  .item-overlay {
+    padding: 1.2rem 1rem 1rem;
+  }
+}
+
+/* ============================================ */
 /* Depoimentos */
+/* ============================================ */
+
 .testimonials-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1041,7 +1102,6 @@ section {
   color: var(--color-neon);
 }
 
-/* Ícones específicos com cores personalizadas */
 .detail-item:first-child i {
   color: #25D366;
 }
