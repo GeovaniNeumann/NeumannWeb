@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
+import Image from 'next/image';
 
 export default function Hero() {
   const scrollTo = useCallback((href: string) => {
@@ -17,6 +18,17 @@ export default function Hero() {
 
   return (
     <section id="hero" className="hero section-padding">
+      {/* Container da imagem de fundo */}
+      <div className="hero-image-container">
+        <Image
+          src="/imghero.webp"
+          alt="Background"
+          fill
+          priority
+          style={{ objectFit: 'cover', opacity: 0.2 }}
+        />
+      </div>
+      
       <div className="container hero-content">
         <h1 className="hero-title reveal-fade-up">
           Sua empresa <br />
@@ -47,7 +59,9 @@ export default function Hero() {
           </button>
         </div>
       </div>
-      <div className="hero-background-effect" />
+      
+      {/* Remove ou comente esta div se não for mais usar */}
+      {/* <div className="hero-background-effect" /> */}
     </section>
   );
 }

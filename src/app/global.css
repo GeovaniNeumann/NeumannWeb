@@ -494,7 +494,7 @@ section {
   z-index: 1;
 }
 
-/* ============================================ */
+
 /* SEÇÕES ESPECÍFICAS */
 /* ============================================ */
 
@@ -509,6 +509,22 @@ section {
   padding-top: 150px;
   padding-left: 20px;
   width: 100%;
+}
+
+.hero-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.hero-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.2;
 }
 
 .hero-content {
@@ -541,17 +557,6 @@ section {
   justify-content: flex-start;
 }
 
-.hero-background-effect {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('https://i.ibb.co/tpJycW6t/SITES-1-1.png') no-repeat center center;
-  background-size: cover;
-  opacity: 0.2;
-  z-index: 0;
-}
 
 /* Services */
 .services-grid {
