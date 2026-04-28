@@ -18,11 +18,11 @@ const contactDetails = [
     icon: 'fas fa-envelope',
     title: 'E-mail',
     content: 'neumannwebsolutions@gmail.com',
-    href: 'mailto:contato@neumannweb.com.br',
+    href: 'mailto:neumannwebsolutions@gmail.com',
   },
   {
     icon: 'fas fa-clock',
-    title: 'Horário de Atendimento',
+    title: 'Horário',
     content: 'Segunda a Sexta: 9h às 18h',
   },
 ];
@@ -79,7 +79,10 @@ export default function Contato() {
             className="contact-form reveal-fade-up"
             style={{ '--delay': '0.3s' }}
           >
-            <h3>Envie sua mensagem</h3>
+            <h3>
+              <i className="fas fa-paper-plane"></i> 
+              Envie sua mensagem
+            </h3>
             <form id="contactForm" onSubmit={handleSubmit}>
               <div className="form-group">
                 <input
@@ -87,7 +90,7 @@ export default function Contato() {
                   name="nome"
                   id="nome"
                   autoComplete="name"
-                  placeholder="Seu nome"
+                  placeholder="Seu nome *"
                   required
                   value={form.nome}
                   onChange={handleChange}
@@ -99,7 +102,7 @@ export default function Contato() {
                   name="email"
                   id="email"
                   autoComplete="email"
-                  placeholder="Seu e-mail"
+                  placeholder="Seu e-mail *"
                   required
                   value={form.email}
                   onChange={handleChange}
@@ -111,7 +114,7 @@ export default function Contato() {
                   name="telefone"
                   id="telefone"
                   autoComplete="tel"
-                  placeholder="Seu telefone (opcional)"
+                  placeholder="Seu telefone"
                   value={form.telefone}
                   onChange={handleChange}
                 />
@@ -120,7 +123,7 @@ export default function Contato() {
                 <textarea
                   name="mensagem"
                   id="mensagem"
-                  placeholder="Sua mensagem"
+                  placeholder="Sua mensagem *"
                   rows={3}
                   required
                   value={form.mensagem}

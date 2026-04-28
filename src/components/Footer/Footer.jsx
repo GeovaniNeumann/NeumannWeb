@@ -23,9 +23,16 @@ export default function Footer() {
             </h4>
             <p>Inovação e performance para o seu ecossistema web.</p>
             <div className="footer-social-icons">
-              <a href="#" target="_blank" aria-label="LinkedIn">
-                <i className="fab fa-linkedin-in"></i>
+              {/* Facebook */}
+              <a
+                href="https://www.facebook.com/profile.php?id=61582905100736"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+              >
+                <i className="fab fa-facebook-f"></i>
               </a>
+              {/* Instagram */}
               <a
                 href="https://www.instagram.com/neumann_web_solutions/"
                 target="_blank"
@@ -33,9 +40,6 @@ export default function Footer() {
                 aria-label="Instagram"
               >
                 <i className="fab fa-instagram"></i>
-              </a>
-              <a href="#" target="_blank" aria-label="GitHub">
-                <i className="fab fa-github"></i>
               </a>
             </div>
           </div>

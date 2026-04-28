@@ -1,3 +1,7 @@
+/* ============================================ */
+/* CONTATO - VERSÃO OTIMIZADA MOBILE */
+/* ============================================ */
+
 .cta-section {
   background: radial-gradient(ellipse at center, rgba(20, 197, 228, 0.08) 0%, transparent 65%);
   position: relative;
@@ -132,6 +136,7 @@
   left: 100%;
 }
 
+/* Contact Details - Cards */
 .contact-details {
   display: flex;
   flex-direction: column;
@@ -210,6 +215,7 @@
   color: var(--color-neon);
 }
 
+/* Cores específicas dos ícones */
 .detail-item:first-child i {
   color: #25D366;
 }
@@ -226,14 +232,14 @@
   color: var(--color-neon);
 }
 
+/* ============================================ */
+/* RESPONSIVIDADE MOBILE PRIORITÁRIA */
+/* ============================================ */
+
+/* Tablet */
 @media (max-width: 1024px) {
   .contact-container {
     gap: 3rem;
-  }
-  
-  .contact-details {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
   }
   
   .contact-title {
@@ -245,60 +251,90 @@
   }
 }
 
+/* Mobile Landscape */
 @media (max-width: 768px) {
   .contact-container {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
   
   .contact-card-cta {
     order: 2;
+    padding: 1.5rem;
   }
   
   .contact-details {
     order: 1;
-  }
-  
-  .contact-card-cta {
-    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
   
   .contact-title {
     font-size: var(--font-size-3xl);
+    text-align: center;
+  }
+  
+  .contact-subtitle {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    margin-bottom: 1.5rem;
   }
   
   .contact-form {
     padding: 1.2rem;
   }
   
-  .contact-details {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
+  .contact-form h3 {
+    font-size: var(--font-size-lg);
+    text-align: center;
+    justify-content: center;
   }
   
   .detail-item {
     text-align: center;
     align-items: center;
-    justify-content: center;
-    padding: 1.2rem;
+    padding: 1rem;
+  }
+  
+  .detail-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .detail-item h4 {
+    font-size: var(--font-size-sm);
+  }
+  
+  .detail-item a,
+  .detail-item span {
+    font-size: 0.75rem;
   }
   
   .detail-item:hover {
     transform: translateY(-5px);
   }
+  
+  .form-group input,
+  .form-group textarea {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+  }
 }
 
+/* Mobile Portrait */
 @media (max-width: 580px) {
   .contact-details {
     grid-template-columns: 1fr;
-    gap: 1.2rem;
+    gap: 1rem;
   }
   
   .detail-item {
     flex-direction: row;
+    text-align: left;
     align-items: center;
     gap: 1rem;
-    text-align: left;
+    padding: 1rem;
   }
   
   .detail-item i {
@@ -308,8 +344,15 @@
   }
   
   .detail-item h4 {
-    font-size: var(--font-size-sm);
+    font-size: 0.85rem;
     margin-bottom: 0;
+    min-width: 120px;
+  }
+  
+  .detail-item a,
+  .detail-item span {
+    font-size: 0.75rem;
+    word-break: break-all;
   }
   
   .detail-item::before {
@@ -320,38 +363,89 @@
   .detail-item:hover {
     transform: translateX(0);
   }
-}
-
-@media (max-width: 480px) {
-  .contact-form {
-    padding: 1rem;
-  }
   
   .contact-title {
     font-size: var(--font-size-2xl);
   }
   
-  .contact-card-cta {
+  .contact-form {
     padding: 1rem;
   }
   
-  .detail-item {
-    padding: 0.9rem;
-  }
-  
-  .detail-item i {
-    font-size: 1.2rem;
-    min-width: 35px;
+  .contact-card-cta {
+    padding: 1rem;
   }
 }
 
+/* Mobile Small (até 480px) */
+@media (max-width: 480px) {
+  .detail-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+  
+  .detail-item i {
+    font-size: 1.5rem;
+    min-width: auto;
+  }
+  
+  .detail-item h4 {
+    min-width: auto;
+    font-size: 0.9rem;
+  }
+  
+  .detail-item a,
+  .detail-item span {
+    font-size: 0.7rem;
+    text-align: center;
+  }
+  
+  .contact-title {
+    font-size: 1.5rem;
+  }
+  
+  .contact-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .form-submit-btn {
+    font-size: 0.85rem;
+    padding: 0.7rem;
+  }
+}
+
+/* Mobile Extra Small (até 360px) */
 @media (max-width: 360px) {
   .detail-item {
     padding: 0.8rem;
   }
   
   .detail-item i {
-    font-size: 1.1rem;
-    min-width: 30px;
+    font-size: 1.2rem;
+  }
+  
+  .detail-item h4 {
+    font-size: 0.8rem;
+  }
+  
+  .detail-item a,
+  .detail-item span {
+    font-size: 0.65rem;
+  }
+  
+  .contact-title {
+    font-size: 1.3rem;
+  }
+  
+  .contact-form h3 {
+    font-size: 1rem;
   }
 }

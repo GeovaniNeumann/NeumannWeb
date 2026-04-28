@@ -80,7 +80,7 @@ export default function Portfolio() {
   return (
     <section id="portfolio" className="portfolio section-padding bg-pattern">
       <div className="container">
-        <h2 className="section-title reveal-fade-up">Projetos Recentes</h2>
+        <h2 className="section-title reveal-fade-up">Projetos <span className="text-neon-gradient">Recentes</span></h2>
         <div className="portfolio-grid">
           {projects.map((p, index) => (
             <a
