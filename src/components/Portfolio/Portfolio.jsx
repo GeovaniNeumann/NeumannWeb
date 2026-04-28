@@ -52,7 +52,7 @@ const projects = [
   },
   {
     href: 'https://adrianaconfeiteira.vercel.app/',
-    src: 'https://i.ibb.co/4n1Qwfdt/Captura-de-tela-2026-04-27-224256.png',
+    src: 'https://i.ibb.co/wNkxw33h/Captura-de-tela-2026-04-28-165652.png',
     alt: 'Projeto Adriana Bolos',
     title: 'Adriana Bolos',
     desc: 'Página para Confeitaria com catálogo de produtos, sobre e informações de contato.',
