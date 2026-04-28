@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Depoimentos.css';
 
 const testimonials = [
@@ -40,20 +40,41 @@ const testimonials = [
 ];
 
 export default function Depoimentos() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const intervalRef = useRef(null);
 
-  // Auto-play do carrossel
+  // Função para mostrar um depoimento específico
+  const showTestimonial = (index) => {
+    setCurrentTestimonial(index);
+  };
+
+  // Auto-rotacionar depoimentos
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+    intervalRef.current = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 5000);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, []);
 
-  // Função para ir para um slide específico
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
+  // Parar auto-play quando o usuário interage
+  const handleDotClick = (index) => {
+    // Limpa o intervalo atual
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    
+    // Mostra o depoimento clicado
+    showTestimonial(index);
+    
+    // Reinicia o auto-play
+    intervalRef.current = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
   };
 
   return (
@@ -66,26 +87,33 @@ export default function Depoimentos() {
           Feedback de quem já transformou seu negócio conosco
         </p>
         
-        <div className="testimonials-simple-carousel">
-          {/* Slide atual */}
-          <div className="testimonial-slide">
-            <div className="testimonial-card-simple">
-              <div className="quote-icon">"</div>
-              <p>{testimonials[currentIndex].text}</p>
-              <div className="client-info">
-                <strong>{testimonials[currentIndex].name}</strong>
-                <span>{testimonials[currentIndex].role}</span>
+        <div className="testimonials-slider">
+          {/* Container dos depoimentos */}
+          <div className="testimonials-container">
+            {testimonials.map((testimonial, index) => (
+              <div 
+                key={index}
+                className={`testimonial ${currentTestimonial === index ? 'active' : ''}`}
+              >
+                <div className="testimonial-card">
+                  <div className="quote-icon">"</div>
+                  <p>{testimonial.text}</p>
+                  <div className="client-info">
+                    <strong>{testimonial.name}</strong>
+                    <span>{testimonial.role}</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
 
-          {/* Indicadores (bolinhas) */}
-          <div className="carousel-dots">
+          {/* Dots de navegação */}
+          <div className="slider-dots">
             {testimonials.map((_, index) => (
               <button
                 key={index}
-                className={`dot ${currentIndex === index ? 'active' : ''}`}
-                onClick={() => goToSlide(index)}
+                className={`slider-dot ${currentTestimonial === index ? 'active' : ''}`}
+                onClick={() => handleDotClick(index)}
                 aria-label={`Ir para depoimento ${index + 1}`}
               />
             ))}

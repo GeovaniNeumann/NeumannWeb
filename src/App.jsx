@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import SEO from './components/SEO/SEO';
+import OrganizationSchema from './components/SEO/OrganizationSchema';
 import Header from './components/Header/Header'
 import Hero from './components/Hero/Hero'
 import Servicos from './components/Servicos/Servicos'
@@ -34,6 +36,16 @@ function App() {
 
   return (
     <>
+      {/* SEO Componentes */}
+      <SEO 
+        title="Neumann Web Solutions - Soluções Web Profissionais"
+        description="Criamos experiências web que transformam o seu negócio em um ecossistema digital. Desenvolvimento de sites, aplicativos mobile, e-commerce, dashboards BI e SEO."
+        keywords="desenvolvimento web, criação de sites, aplicativos mobile, e-commerce, SEO, dashboards BI, consultoria digital, desenvolvimento react, criação de landing pages"
+        url="https://neumannwebsolutions.com.br"
+        image="/og-image.webp"
+      />
+      <OrganizationSchema />
+
       {/* Meta Pixel NOSCRIPT */}
       <noscript>
         <img 

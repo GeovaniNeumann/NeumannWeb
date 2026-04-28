@@ -1,24 +1,57 @@
-/* Carrossel Simples de Depoimentos */
-.testimonials-simple-carousel {
+/* Slider de Depoimentos */
+.testimonials-slider {
   max-width: 900px;
   margin: 0 auto;
   position: relative;
 }
 
-.testimonial-slide {
-  animation: fadeIn 0.5s ease-in-out;
+/* Container dos depoimentos */
+.testimonials-container {
+  position: relative;
+  min-height: 400px;
 }
 
-.testimonial-card-simple {
+/* Cada depoimento */
+.testimonial {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.testimonial.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  animation: flipInY 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* Efeito Flip In Y */
+@keyframes flipInY {
+  from {
+    transform: perspective(1000px) rotateY(90deg);
+    opacity: 0;
+  }
+  to {
+    transform: perspective(1000px) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+/* Card do depoimento */
+.testimonial-card {
   background: var(--color-card);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--border-radius-xl);
   padding: 3rem 2rem;
   text-align: center;
-  transition: var(--transition-fast);
+  transition: all 0.3s ease;
 }
 
-.testimonial-card-simple:hover {
+.testimonial-card:hover {
   border-color: var(--color-neon);
   box-shadow: 0 10px 40px rgba(20, 197, 228, 0.15);
   transform: translateY(-5px);
@@ -33,7 +66,7 @@
   margin-bottom: 1rem;
 }
 
-.testimonial-card-simple p {
+.testimonial-card p {
   color: var(--color-text-secondary);
   font-style: italic;
   font-size: 1.1rem;
@@ -54,15 +87,15 @@
   color: var(--color-neon);
 }
 
-/* Bolinhas de navegação */
-.carousel-dots {
+/* Dots de navegação */
+.slider-dots {
   display: flex;
   justify-content: center;
   gap: 0.75rem;
   margin-top: 2.5rem;
 }
 
-.dot {
+.slider-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -73,32 +106,24 @@
   padding: 0;
 }
 
-.dot:hover {
+.slider-dot:hover {
   background: var(--color-neon-light);
   transform: scale(1.2);
 }
 
-.dot.active {
+.slider-dot.active {
   background: var(--color-neon);
   width: 30px;
   border-radius: 5px;
 }
 
-/* Animação */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Responsividade */
 @media (max-width: 768px) {
-  .testimonial-card-simple {
+  .testimonials-container {
+    min-height: 450px;
+  }
+  
+  .testimonial-card {
     padding: 2rem 1.5rem;
   }
   
@@ -106,7 +131,7 @@
     font-size: 3rem;
   }
   
-  .testimonial-card-simple p {
+  .testimonial-card p {
     font-size: 1rem;
     margin-bottom: 1.5rem;
   }
@@ -121,7 +146,11 @@
 }
 
 @media (max-width: 480px) {
-  .testimonial-card-simple {
+  .testimonials-container {
+    min-height: 500px;
+  }
+  
+  .testimonial-card {
     padding: 1.5rem 1rem;
   }
   
@@ -129,22 +158,40 @@
     font-size: 2.5rem;
   }
   
-  .testimonial-card-simple p {
+  .testimonial-card p {
     font-size: 0.9rem;
     line-height: 1.5;
   }
   
-  .carousel-dots {
+  .slider-dots {
     gap: 0.5rem;
     margin-top: 1.5rem;
   }
   
-  .dot {
+  .slider-dot {
     width: 8px;
     height: 8px;
   }
   
-  .dot.active {
+  .slider-dot.active {
     width: 20px;
+  }
+}
+
+/* Redução de movimento para usuários sensíveis */
+@media (prefers-reduced-motion: reduce) {
+  .testimonial.active {
+    animation: none;
+  }
+  
+  @keyframes flipInY {
+    from {
+      transform: perspective(1000px) rotateY(0deg);
+      opacity: 1;
+    }
+    to {
+      transform: perspective(1000px) rotateY(0deg);
+      opacity: 1;
+    }
   }
 }
