@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://neumannwebsolutions.com.br/sitemap.xml
+
+# Host (opcional, mas recomendado)
+Host: https://neumannwebsolutions.com.br
+
+# Crawl delay (opcional - evita sobrecarregar o servidor)
+Crawl-delay: 1
