@@ -3,35 +3,40 @@ import './Depoimentos.css';
 
 const testimonials = [
   {
-    text: 'Profissionais incríveis! Transformaram completamente nossa presença digital. O site não só ficou lindo como aumentou nossas conversões em 40%.',
-    name: 'João Silva',
-    role: 'Empresário'
+    text: 'O site que a Neumann Web Solutions criou para mim como personal trainer superou todas as expectativas! Meus clientes elogiam muito a apresentação e os agendamentos aumentaram significativamente.',
+    name: 'Anderson Britto',
+    role: 'Personal Trainer'
   },
   {
-    text: 'Atendimento excepcional e entrega além do esperado. O sistema customizado que desenvolveram otimizou nossos processos e reduziu custos operacionais.',
-    name: 'Maria Santos',
-    role: 'Empresária'
+    text: 'A vitrine virtual para minhas bonecas artesanais ficou simplesmente encantadora! As clientes adoram navegar e as vendas aumentaram muito. Recomendo demais!',
+    name: 'Cantinho das Bonecas',
+    role: 'Artesanato'
   },
   {
-    text: 'Trabalho impecável! Desenvolveram nosso dashboard de BI que nos permite tomar decisões baseadas em dados reais. Recomendo fortemente!',
-    name: 'Carlos Oliveira',
-    role: 'Empresário'
+    text: 'A refatoração do nosso sistema foi impecável! A equipe aplicou um design system moderno e clean code que transformou completamente nossa experiência como usuários.',
+    name: 'Lugh World',
+    role: 'Tech'
   },
   {
-    text: 'O e-commerce que desenvolveram para nossa loja aumentou as vendas em 85% no primeiro mês. A integração com pagamentos e frete ficou perfeita!',
-    name: 'Ana Carolina Mendes',
-    role: 'Loja Bella Moda'
+    text: 'A página da PRFiber está excelente! Transmite exatamente a qualidade e velocidade que oferecemos. Os clientes confiam mais na nossa marca agora.',
+    name: 'PRFiber',
+    role: 'Internet Fibra Óptica'
   },
   {
-    text: 'O aplicativo mobile revolucionou nosso atendimento. Nossos clientes agora têm uma experiência muito mais fluida e intuitiva.',
-    name: 'Roberto Alves',
-    role: 'Tech Solutions'
+    text: 'A landing page para meus produtos premium está gerando muitas vendas! O design emocional e persuasivo fez toda a diferença nas conversões.',
+    name: 'Diego Moreira',
+    role: 'Produtos Premium'
   },
   {
-    text: 'O dashboard de BI nos deu visibilidade total do negócio. Conseguimos identificar oportunidades que antes eram invisíveis.',
-    name: 'Patrícia Lima',
-    role: 'Grupo Empresarial Lima'
-  }
+    text: 'O site da LA Car Center Prime está fantástico! Os clientes estão agendando serviços direto pelo formulário, facilitou demais nosso atendimento.',
+    name: 'LA Car Center Prime',
+    role: 'Oficina Mecânica'
+  },
+  {
+    text: 'A página da minha confeitaria ficou linda e funcional! As clientes adoram ver o catálogo de bolos e já faturaram muito com as encomendas.',
+    name: 'Adriana Bolos',
+    role: 'Confeitaria'
+  },
 ];
 
 export default function Depoimentos() {
@@ -41,7 +46,7 @@ export default function Depoimentos() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-    }, 5000); // Muda a cada 5 segundos
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);

@@ -201,9 +201,11 @@
   }
 }
 
+/* Tablet (768px - 1024px) */
 @media (max-width: 768px) {
   .hero-title {
     font-size: var(--font-size-4xl);
+    margin-top: 8rem; /* Adicionado para tablet */
   }
   
   .hero-actions {
@@ -233,17 +235,23 @@
   }
 }
 
+/* Mobile (até 480px) */
 @media (max-width: 480px) {
+  .hero {
+    padding-top: 200px;
+    min-height: 90vh;
+  }
+  
   .hero-title {
     font-size: var(--font-size-3xl);
+    margin-bottom: 0.8rem;
+    margin-top: 12rem; /* Ajustado para mobile */
   }
   
   .hero-subtitle {
     font-size: var(--font-size-base);
-  }
-  
-  .hero {
-    padding-top: 120px;
+    margin-bottom: 2rem;
+    padding: 0 10px;
   }
   
   .hero-actions .btn {
@@ -267,9 +275,15 @@
   }
 }
 
+/* Mobile Small (até 360px) */
 @media (max-width: 360px) {
+  .hero {
+    padding-top: 220px;
+  }
+  
   .hero-title {
     font-size: 1.8rem;
+    margin-top: 15rem; /* Seu valor original para telas muito pequenas */
   }
   
   .hero-actions .btn {
@@ -278,18 +292,37 @@
   }
 }
 
-@media (max-height: 600px) and (orientation: landscape) {
+/* Mobile Extra Small (até 320px) */
+@media (max-width: 320px) {
   .hero {
-    min-height: auto;
-    padding: 100px 0 40px;
+    padding-top: 240px;
   }
   
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.6rem;
+    margin-top: 17rem;
   }
   
   .hero-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Landscape mode para mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero {
+    min-height: auto;
+    padding-top: 120px;
+    padding-bottom: 40px;
+  }
+  
+  .hero-title {
+    font-size: 1.8rem;
+    margin-top: 5rem; /* Reduzido no landscape */
+  }
+  
+  .hero-subtitle {
+    font-size: 0.85rem;
     margin-bottom: 1rem;
   }
   
