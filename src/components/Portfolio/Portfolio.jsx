@@ -1,6 +1,15 @@
 import './Portfolio.css';
 
 const projects = [
+
+  {
+    href: 'https://anderbrittopersonal.vercel.app/',
+    src: 'https://i.ibb.co/chFXfjDY/Captura-de-tela-2026-04-27-224425.png',
+    alt: 'Projeto Anderson Brito',
+    title: 'Anderson Brito',
+    desc: 'Página para personal trainer com serviços, depoimentos e informações de contato.',
+    reveal: 'reveal-slide-right',
+  },
   {
     href: 'https://cantinhodoartesanato.vercel.app/',
     src: 'https://i.ibb.co/CKJ9nPhY/Captura-de-tela-2026-04-27-224723.png',
@@ -50,11 +59,19 @@ const projects = [
     reveal: 'reveal-slide-left',
   },
   {
-    href: 'https://anderbrittopersonal.vercel.app/',
-    src: 'https://i.ibb.co/chFXfjDY/Captura-de-tela-2026-04-27-224425.png',
-    alt: 'Projeto Anderson Brito',
-    title: 'Anderson Brito',
-    desc: 'Página para personal trainer com serviços, depoimentos e informações de contato.',
+    href: 'https://site-para-oficina.vercel.app/',
+    src: 'https://i.ibb.co/CL1zcnw/Captura-de-tela-2026-04-28-102913.png',
+    alt: 'Projeto para oficina mecânica',
+    title: 'Site para oficina a venda.',
+    desc: 'Página para oficina mecânica com galeria, serviços e formulario para agendamento via whatsapp.',
+    reveal: 'reveal-slide-right',
+  },
+  {
+    href: 'https://siteparabarbearia.vercel.app/',
+    src: 'https://i.ibb.co/sv5rwbk9/Captura-de-tela-2026-04-28-103346.png',
+    alt: 'Projeto para barbearia',
+    title: 'Site para barbearia a venda.',
+    desc: 'Página para barbearia com direcionamento para agendamentos via whatsapp',
     reveal: 'reveal-slide-right',
   },
 ];
