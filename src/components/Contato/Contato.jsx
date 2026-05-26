@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import './Contato.css';
 
 const contactDetails = [
@@ -7,18 +7,21 @@ const contactDetails = [
     title: 'WhatsApp',
     content: '(41) 99755-2818',
     href: 'https://wa.me/5541997552818',
+    ariaLabel: 'Fale conosco pelo WhatsApp',
   },
   {
     icon: 'fab fa-instagram',
     title: 'Instagram',
     content: '@neumann_web_solutions',
     href: 'https://www.instagram.com/neumann_web_solutions/',
+    ariaLabel: 'Siga-nos no Instagram',
   },
   {
     icon: 'fas fa-envelope',
     title: 'E-mail',
     content: 'neumannwebsolutions@gmail.com',
     href: 'mailto:neumannwebsolutions@gmail.com',
+    ariaLabel: 'Envie um e-mail',
   },
   {
     icon: 'fas fa-clock',
@@ -34,38 +37,66 @@ export default function Contato() {
     telefone: '',
     mensagem: '',
   });
+  const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setError('');
+  }, []);
+
+  const handleBlur = useCallback((e) => {
+    const { name } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+  }, []);
+
+  const validateForm = () => {
+    if (!form.nome.trim()) return 'Nome é obrigatório.';
+    if (!form.email.trim()) return 'E-mail é obrigatório.';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) return 'E-mail inválido.';
+    if (!form.mensagem.trim()) return 'Mensagem é obrigatória.';
+    return null;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.nome || !form.email || !form.mensagem) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
+
     setLoading(true);
+    setError('');
 
-    let texto = `Olá! Gostaria de solicitar um orçamento.\n\n`;
-    texto += `*Nome:* ${form.nome}\n`;
-    texto += `*E-mail:* ${form.email}\n`;
-    if (form.telefone) texto += `*Telefone:* ${form.telefone}\n`;
-    texto += `*Mensagem:* ${form.mensagem}\n\nAguardo seu retorno!`;
+    // Construção da mensagem para WhatsApp
+    let texto = `Olá! Gostaria de solicitar um orçamento.%0A%0A`;
+    texto += `*Nome:* ${form.nome}%0A`;
+    texto += `*E-mail:* ${form.email}%0A`;
+    if (form.telefone) texto += `*Telefone:* ${form.telefone}%0A`;
+    texto += `*Mensagem:* ${form.mensagem}%0A%0A`;
+    texto += `Aguardo seu retorno!`;
 
-    const url = `https://wa.me/5541997552818?text=${encodeURIComponent(texto)}`;
+    const url = `https://wa.me/5541997552818?text=${texto}`;
 
+    // Pequeno delay para UX (opcional, mas mantido para feedback visual)
     setTimeout(() => {
-      window.open(url, '_blank');
+      window.open(url, '_blank', 'noopener,noreferrer');
       setForm({ nome: '', email: '', telefone: '', mensagem: '' });
+      setTouched({});
       setLoading(false);
-    }, 1500);
+    }, 800);
   };
 
+  const isInvalid = (field) => touched[field] && !form[field]?.trim();
+
   return (
-    <section id="contato" className="contato section-padding cta-section">
+    <section id="contato" className="contato-section section-padding">
       <div className="container contact-container">
+        {/* Card principal com formulário */}
         <div className="contact-card-cta reveal-fade-up">
           <h2 className="contact-title">
             Pronto para a sua{' '}
@@ -75,73 +106,101 @@ export default function Contato() {
             Preencha o formulário abaixo e entraremos em contato via WhatsApp
           </p>
 
-          <div
-            className="contact-form reveal-fade-up"
-            style={{ '--delay': '0.3s' }}
-          >
+          <div className="contact-form reveal-fade-up" style={{ '--delay': '0.3s' }}>
             <h3>
-              <i className="fas fa-paper-plane"></i> 
+              <i className="fas fa-paper-plane" aria-hidden="true"></i> 
               Envie sua mensagem
             </h3>
-            <form id="contactForm" onSubmit={handleSubmit}>
+
+            {error && (
+              <div className="form-error-message" role="alert">
+                <i className="fas fa-exclamation-triangle"></i> {error}
+              </div>
+            )}
+
+            <form noValidate onSubmit={handleSubmit}>
               <div className="form-group">
+                <label htmlFor="nome">Nome completo *</label>
                 <input
                   type="text"
-                  name="nome"
                   id="nome"
+                  name="nome"
                   autoComplete="name"
-                  placeholder="Seu nome *"
+                  placeholder="Seu nome"
                   required
                   value={form.nome}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={isInvalid('nome')}
+                  aria-describedby={isInvalid('nome') ? 'error-nome' : undefined}
                 />
+                {isInvalid('nome') && (
+                  <span id="error-nome" className="field-error">Campo obrigatório</span>
+                )}
               </div>
+
               <div className="form-group">
+                <label htmlFor="email">E-mail *</label>
                 <input
                   type="email"
-                  name="email"
                   id="email"
+                  name="email"
                   autoComplete="email"
-                  placeholder="Seu e-mail *"
+                  placeholder="seu@email.com"
                   required
                   value={form.email}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={touched.email && !!validateForm()?.includes('E-mail')}
                 />
               </div>
+
               <div className="form-group">
+                <label htmlFor="telefone">Telefone (opcional)</label>
                 <input
                   type="tel"
-                  name="telefone"
                   id="telefone"
+                  name="telefone"
                   autoComplete="tel"
-                  placeholder="Seu telefone"
+                  placeholder="(41) 99999-9999"
                   value={form.telefone}
                   onChange={handleChange}
                 />
               </div>
+
               <div className="form-group">
+                <label htmlFor="mensagem">Mensagem *</label>
                 <textarea
-                  name="mensagem"
                   id="mensagem"
-                  placeholder="Sua mensagem *"
-                  rows={3}
+                  name="mensagem"
+                  placeholder="Conte-nos sua ideia ou dúvida"
+                  rows={4}
                   required
                   value={form.mensagem}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={isInvalid('mensagem')}
                 />
+                {isInvalid('mensagem') && (
+                  <span className="field-error">Campo obrigatório</span>
+                )}
               </div>
+
               <button
                 type="submit"
-                className="btn btn-primary-glow form-submit-btn"
+                className="btn-cta form-submit-btn"
                 disabled={loading}
+                aria-label={loading ? 'Enviando mensagem' : 'Enviar via WhatsApp'}
               >
                 {loading ? (
                   <>
-                    <i className="fas fa-spinner fa-spin"></i> Redirecionando...
+                    <i className="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                    <span> Redirecionando...</span>
                   </>
                 ) : (
                   <>
-                    <i className="fab fa-whatsapp"></i> Enviar via WhatsApp
+                    <i className="fab fa-whatsapp" aria-hidden="true"></i>
+                    <span> Enviar via WhatsApp</span>
                   </>
                 )}
               </button>
@@ -149,24 +208,23 @@ export default function Contato() {
           </div>
         </div>
 
-        <div
-          className="contact-details reveal-fade-up"
-          style={{ '--delay': '0.2s' }}
-        >
-          {contactDetails.map((d) => (
-            <div key={d.title} className="detail-item">
-              <i className={d.icon}></i>
-              <h4>{d.title}</h4>
-              {d.href ? (
-                <a 
-                  href={d.href} 
-                  target="_blank" 
+        {/* Cards de contato lateral */}
+        <div className="contact-details reveal-fade-up" style={{ '--delay': '0.2s' }}>
+          {contactDetails.map((item) => (
+            <div key={item.title} className="detail-item">
+              <i className={item.icon} aria-hidden="true"></i>
+              <h4>{item.title}</h4>
+              {item.href ? (
+                <a
+                  href={item.href}
+                  target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={item.ariaLabel || item.title}
                 >
-                  {d.content}
+                  {item.content}
                 </a>
               ) : (
-                <span>{d.content}</span>
+                <span>{item.content}</span>
               )}
             </div>
           ))}
