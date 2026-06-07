@@ -11,15 +11,16 @@ const navItems = [
 ];
 
 export default function Header() {
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled]       = useState(false);
   const [scrollRatio, setScrollRatio] = useState(0);
-  const [activeLink, setActiveLink] = useState('#hero');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pillRef = useRef(null);
-  const navRef = useRef(null);
-  const btnRefs = useRef({});
+  const [activeLink, setActiveLink]   = useState('#hero');
+  const [isMenuOpen, setIsMenuOpen]   = useState(false);
 
-  // Scroll: animação do header + detecção da seção ativa
+  const pillRef  = useRef(null);
+  const navRef   = useRef(null);
+  const btnRefs  = useRef({});
+
+  /* ── Scroll: header opacity + seção ativa ─────────────── */
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
@@ -29,10 +30,8 @@ export default function Header() {
       const sections = Array.from(document.querySelectorAll('section[id]'));
       let current = '#hero';
       for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        const offsetTop = section.offsetTop;
-        if (y + 120 >= offsetTop) {
-          current = '#' + section.id;
+        if (y + 120 >= sections[i].offsetTop) {
+          current = '#' + sections[i].id;
           break;
         }
       }
@@ -44,59 +43,58 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Pill indicator (apenas desktop)
-  useEffect(() => {
+  /* ── Pill indicator (desktop) ──────────────────────────── */
+  const updatePill = useCallback(() => {
     if (window.innerWidth <= 1024) return;
-
-    const btn = btnRefs.current[activeLink];
-    const nav = navRef.current;
+    const btn  = btnRefs.current[activeLink];
+    const nav  = navRef.current;
     const pill = pillRef.current;
     if (!btn || !nav || !pill) return;
 
     const btnRect = btn.getBoundingClientRect();
     const navRect = nav.getBoundingClientRect();
     if (navRect.width > 0) {
-      pill.style.width = `${btnRect.width}px`;
-      pill.style.left = `${btnRect.left - navRect.left}px`;
+      pill.style.width   = `${btnRect.width}px`;
+      pill.style.left    = `${btnRect.left - navRect.left}px`;
       pill.style.opacity = '1';
     } else {
       pill.style.opacity = '0';
     }
   }, [activeLink]);
 
-  // Smooth scroll e fecha menu
+  useEffect(() => { updatePill(); }, [updatePill]);
+
+  // Atualiza pill ao redimensionar (ex: voltar de mobile para desktop)
+  useEffect(() => {
+    window.addEventListener('resize', updatePill);
+    return () => window.removeEventListener('resize', updatePill);
+  }, [updatePill]);
+
+  /* ── Smooth scroll + fecha menu ────────────────────────── */
   const scrollTo = useCallback((href) => {
     setIsMenuOpen(false);
     const el = document.querySelector(href);
     if (!el) return;
-    const headerOffset = 64;
-    const elementPosition = el.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+    const offsetPosition = el.getBoundingClientRect().top + window.scrollY - 64;
     window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
   }, []);
 
-  // Lock body quando menu aberto
+  /* ── Body lock quando menu aberto ─────────────────────── */
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isMenuOpen]);
 
-  // Fecha menu ao redimensionar para desktop
+  /* ── Fecha menu ao redimensionar para desktop ──────────── */
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 1024 && isMenuOpen) {
-        setIsMenuOpen(false);
-      }
+      if (window.innerWidth > 1024 && isMenuOpen) setIsMenuOpen(false);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isMenuOpen]);
 
-  // Fecha com tecla ESC
+  /* ── Fecha com ESC ─────────────────────────────────────── */
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isMenuOpen) setIsMenuOpen(false);
@@ -107,12 +105,18 @@ export default function Header() {
 
   return (
     <header
+      id="header"
       className={`header ${scrolled ? 'scrolled' : ''}`}
       style={{ '--scroll': scrollRatio }}
     >
       <div className="container header-container">
-        {/* Logo */}
-        <button className="logo-link" onClick={() => scrollTo('#hero')} aria-label="Ir para o início">
+
+        {/* ── Logo ── */}
+        <button
+          className="logo-link"
+          onClick={() => scrollTo('#hero')}
+          aria-label="Ir para o início"
+        >
           <div className="logo-inner">
             <img src="/logoheader.webp" alt="" className="logo-img" aria-hidden="true" />
             <div className="logo-wordmark">
@@ -122,21 +126,24 @@ export default function Header() {
           </div>
         </button>
 
-        {/* Nav (desktop e drawer mobile) */}
+        {/* ── Nav (desktop + drawer mobile) ── */}
         <nav
+          id="nav-drawer"
           ref={navRef}
           className={`nav ${isMenuOpen ? 'active' : ''}`}
           aria-label="Navegação principal"
-          aria-hidden={isMenuOpen ? 'false' : 'true'}
+          // CORREÇÃO: aria-hidden correto — esconde do leitor de tela quando fechado em mobile
+          aria-hidden={isMenuOpen ? 'false' : undefined}
         >
           {/* Pill indicator (desktop) */}
           <span className="nav-pill" ref={pillRef} aria-hidden="true" />
 
-          {/* Botão fechar (X) - mobile */}
+          {/* Botão fechar (X) — mobile */}
           <button
             className="mobile-close-btn"
             onClick={() => setIsMenuOpen(false)}
             aria-label="Fechar menu"
+            tabIndex={isMenuOpen ? 0 : -1}
           >
             ✕
           </button>
@@ -148,12 +155,13 @@ export default function Header() {
               className={`nav-link ${activeLink === item.href ? 'active' : ''}`}
               onClick={() => scrollTo(item.href)}
               aria-current={activeLink === item.href ? 'page' : undefined}
+              tabIndex={!isMenuOpen && window.innerWidth <= 1024 ? -1 : 0}
             >
               {item.label}
             </button>
           ))}
 
-          {/* CTA específico para o drawer mobile */}
+          {/* CTA mobile dentro do drawer */}
           <div className="cta-mobile-only">
             <a
               href="https://wa.me/5541997552818"
@@ -161,14 +169,15 @@ export default function Header() {
               rel="noopener noreferrer"
               className="btn-cta"
               onClick={() => setIsMenuOpen(false)}
+              tabIndex={isMenuOpen ? 0 : -1}
             >
-              <i className="fab fa-whatsapp" aria-hidden="true"></i>
+              <i className="fab fa-whatsapp" aria-hidden="true" />
               Orçamento
             </a>
           </div>
         </nav>
 
-        {/* Lado direito: CTA desktop + hamburger */}
+        {/* ── Direita: CTA desktop + hamburger ── */}
         <div className="header-right">
           <a
             href="https://wa.me/5541997552818"
@@ -176,7 +185,7 @@ export default function Header() {
             rel="noopener noreferrer"
             className="btn-cta cta-header"
           >
-            <i className="fab fa-whatsapp" aria-hidden="true"></i>
+            <i className="fab fa-whatsapp" aria-hidden="true" />
             Orçamento
           </a>
 
@@ -191,7 +200,7 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Overlay (fundo escuro) */}
+        {/* ── Overlay mobile ── */}
         <div
           className={`mobile-overlay ${isMenuOpen ? 'active' : ''}`}
           onClick={() => setIsMenuOpen(false)}

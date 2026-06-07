@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    HERO — 2025 edition
-   Técnicas: crossfade fade, Ken Burns, progress dot,
+   Técnicas: crossfade fade, progress dot,
    conteúdo ancorado na base, overlay mínimo.
 ═══════════════════════════════════════════════════════════ */
 
@@ -59,15 +59,6 @@
   display: block;
 }
 
-/* Ken Burns só no slide ativo */
-.hero-bg-image--ken {
-  animation: kenBurns 7s ease-out forwards;
-}
-
-@keyframes kenBurns {
-  from { transform: scale(1.06); }
-  to   { transform: scale(1.00); }
-}
 
 /* ─── Overlay ───────────────────────────────────────────────── */
 .hero-slide-overlay {
@@ -302,8 +293,7 @@
 /* ─── Redução de movimento ──────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .hero-slide--out,
-  .hero-slide--in,
-  .hero-bg-image--ken {
+  .hero-slide--in {
     animation: none;
   }
 

@@ -27,16 +27,12 @@ const contactDetails = [
     icon: 'fas fa-clock',
     title: 'Horário',
     content: 'Segunda a Sexta: 9h às 18h',
+    href: null,
   },
 ];
 
 export default function Contato() {
-  const [form, setForm] = useState({
-    nome: '',
-    email: '',
-    telefone: '',
-    mensagem: '',
-  });
+  const [form, setForm] = useState({ nome: '', email: '', telefone: '', mensagem: '' });
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -48,47 +44,37 @@ export default function Contato() {
   }, []);
 
   const handleBlur = useCallback((e) => {
-    const { name } = e.target;
-    setTouched((prev) => ({ ...prev, [name]: true }));
+    setTouched((prev) => ({ ...prev, [e.target.name]: true }));
   }, []);
 
   const validateForm = () => {
-    if (!form.nome.trim()) return 'Nome é obrigatório.';
-    if (!form.email.trim()) return 'E-mail é obrigatório.';
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(form.email)) return 'E-mail inválido.';
+    if (!form.nome.trim())    return 'Nome é obrigatório.';
+    if (!form.email.trim())   return 'E-mail é obrigatório.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return 'E-mail inválido.';
     if (!form.mensagem.trim()) return 'Mensagem é obrigatória.';
     return null;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+    if (validationError) { setError(validationError); return; }
 
     setLoading(true);
-    setError('');
 
-    // Construção da mensagem para WhatsApp
+    // Monta URL do WhatsApp e abre imediatamente (sem setTimeout)
     let texto = `Olá! Gostaria de solicitar um orçamento.%0A%0A`;
-    texto += `*Nome:* ${form.nome}%0A`;
-    texto += `*E-mail:* ${form.email}%0A`;
-    if (form.telefone) texto += `*Telefone:* ${form.telefone}%0A`;
-    texto += `*Mensagem:* ${form.mensagem}%0A%0A`;
-    texto += `Aguardo seu retorno!`;
+    texto += `*Nome:* ${encodeURIComponent(form.nome)}%0A`;
+    texto += `*E-mail:* ${encodeURIComponent(form.email)}%0A`;
+    if (form.telefone) texto += `*Telefone:* ${encodeURIComponent(form.telefone)}%0A`;
+    texto += `*Mensagem:* ${encodeURIComponent(form.mensagem)}`;
 
-    const url = `https://wa.me/5541997552818?text=${texto}`;
+    window.open(`https://wa.me/5541997552818?text=${texto}`, '_blank', 'noopener,noreferrer');
 
-    // Pequeno delay para UX (opcional, mas mantido para feedback visual)
-    setTimeout(() => {
-      window.open(url, '_blank', 'noopener,noreferrer');
-      setForm({ nome: '', email: '', telefone: '', mensagem: '' });
-      setTouched({});
-      setLoading(false);
-    }, 800);
+    setForm({ nome: '', email: '', telefone: '', mensagem: '' });
+    setTouched({});
+    setLoading(false);
+    setError('');
   };
 
   const isInvalid = (field) => touched[field] && !form[field]?.trim();
@@ -96,7 +82,8 @@ export default function Contato() {
   return (
     <section id="contato" className="contato-section section-padding">
       <div className="container contact-container">
-        {/* Card principal com formulário */}
+
+        {/* ── Card formulário ── */}
         <div className="contact-card-cta reveal-fade-up">
           <h2 className="contact-title">
             Pronto para a sua{' '}
@@ -108,13 +95,13 @@ export default function Contato() {
 
           <div className="contact-form reveal-fade-up" style={{ '--delay': '0.3s' }}>
             <h3>
-              <i className="fas fa-paper-plane" aria-hidden="true"></i> 
+              <i className="fas fa-paper-plane" aria-hidden="true" />
               Envie sua mensagem
             </h3>
 
             {error && (
               <div className="form-error-message" role="alert">
-                <i className="fas fa-exclamation-triangle"></i> {error}
+                <i className="fas fa-exclamation-triangle" /> {error}
               </div>
             )}
 
@@ -122,35 +109,20 @@ export default function Contato() {
               <div className="form-group">
                 <label htmlFor="nome">Nome completo *</label>
                 <input
-                  type="text"
-                  id="nome"
-                  name="nome"
-                  autoComplete="name"
-                  placeholder="Seu nome"
-                  required
-                  value={form.nome}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  type="text" id="nome" name="nome" autoComplete="name"
+                  placeholder="Seu nome" required
+                  value={form.nome} onChange={handleChange} onBlur={handleBlur}
                   aria-invalid={isInvalid('nome')}
-                  aria-describedby={isInvalid('nome') ? 'error-nome' : undefined}
                 />
-                {isInvalid('nome') && (
-                  <span id="error-nome" className="field-error">Campo obrigatório</span>
-                )}
+                {isInvalid('nome') && <span className="field-error">Campo obrigatório</span>}
               </div>
 
               <div className="form-group">
                 <label htmlFor="email">E-mail *</label>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  autoComplete="email"
-                  placeholder="seu@email.com"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  type="email" id="email" name="email" autoComplete="email"
+                  placeholder="neumannwebsolutions@gmail.com" required
+                  value={form.email} onChange={handleChange} onBlur={handleBlur}
                   aria-invalid={touched.email && !!validateForm()?.includes('E-mail')}
                 />
               </div>
@@ -158,77 +130,64 @@ export default function Contato() {
               <div className="form-group">
                 <label htmlFor="telefone">Telefone (opcional)</label>
                 <input
-                  type="tel"
-                  id="telefone"
-                  name="telefone"
-                  autoComplete="tel"
+                  type="tel" id="telefone" name="telefone" autoComplete="tel"
                   placeholder="(41) 99999-9999"
-                  value={form.telefone}
-                  onChange={handleChange}
+                  value={form.telefone} onChange={handleChange}
                 />
               </div>
 
               <div className="form-group">
                 <label htmlFor="mensagem">Mensagem *</label>
                 <textarea
-                  id="mensagem"
-                  name="mensagem"
+                  id="mensagem" name="mensagem"
                   placeholder="Conte-nos sua ideia ou dúvida"
-                  rows={4}
-                  required
-                  value={form.mensagem}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  rows={4} required
+                  value={form.mensagem} onChange={handleChange} onBlur={handleBlur}
                   aria-invalid={isInvalid('mensagem')}
                 />
-                {isInvalid('mensagem') && (
-                  <span className="field-error">Campo obrigatório</span>
-                )}
+                {isInvalid('mensagem') && <span className="field-error">Campo obrigatório</span>}
               </div>
 
               <button
                 type="submit"
                 className="btn-cta form-submit-btn"
                 disabled={loading}
-                aria-label={loading ? 'Enviando mensagem' : 'Enviar via WhatsApp'}
+                aria-label="Enviar via WhatsApp"
               >
-                {loading ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin" aria-hidden="true"></i>
-                    <span> Redirecionando...</span>
-                  </>
-                ) : (
-                  <>
-                    <i className="fab fa-whatsapp" aria-hidden="true"></i>
-                    <span> Enviar via WhatsApp</span>
-                  </>
-                )}
+                <i className="fab fa-whatsapp" aria-hidden="true" />
+                <span>Enviar via WhatsApp</span>
               </button>
             </form>
           </div>
         </div>
 
-        {/* Cards de contato lateral */}
+        {/* ── Cards de contato ── */}
+        {/* CORREÇÃO: cards clicáveis são <a> diretamente, não <div> com <a> dentro */}
         <div className="contact-details reveal-fade-up" style={{ '--delay': '0.2s' }}>
-          {contactDetails.map((item) => (
-            <div key={item.title} className="detail-item">
-              <i className={item.icon} aria-hidden="true"></i>
-              <h4>{item.title}</h4>
-              {item.href ? (
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={item.ariaLabel || item.title}
-                >
-                  {item.content}
-                </a>
-              ) : (
+          {contactDetails.map((item) =>
+            item.href ? (
+              <a
+                key={item.title}
+                href={item.href}
+                target={item.href.startsWith('mailto') ? '_self' : '_blank'}
+                rel="noopener noreferrer"
+                className="detail-item"
+                aria-label={item.ariaLabel || item.title}
+              >
+                <i className={item.icon} aria-hidden="true" />
+                <h4>{item.title}</h4>
                 <span>{item.content}</span>
-              )}
-            </div>
-          ))}
+              </a>
+            ) : (
+              <div key={item.title} className="detail-item detail-item--static">
+                <i className={item.icon} aria-hidden="true" />
+                <h4>{item.title}</h4>
+                <span>{item.content}</span>
+              </div>
+            )
+          )}
         </div>
+
       </div>
     </section>
   );

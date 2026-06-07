@@ -223,6 +223,13 @@
   word-wrap: break-word;
   position: relative;
   cursor: pointer;
+  /* Reset de estilos para quando o elemento for <a> */
+  text-decoration: none;
+  color: inherit;
+}
+
+.detail-item--static {
+  cursor: default;
 }
 
 .detail-item::before {
@@ -267,7 +274,8 @@
 }
 
 .detail-item a,
-.detail-item span {
+.detail-item span,
+.detail-item > span {
   color: var(--color-text-secondary);
   text-decoration: none;
   transition: color 0.3s ease;
@@ -275,7 +283,12 @@
   font-size: var(--font-size-sm);
 }
 
-.detail-item a:hover {
+/* Quando o próprio card é um <a>, o span interno herda */
+a.detail-item span {
+  color: var(--color-text-secondary);
+}
+
+a.detail-item:hover span {
   color: var(--color-neon);
 }
 

@@ -21,17 +21,34 @@ const INTERVAL = 6000;
 const TRANSITION_MS = 900;
 
 export default function Hero() {
-  const [current, setCurrent]       = useState(0);
-  const [prev, setPrev]             = useState(null);
-  const [transitioning, setTrans]   = useState(false);
-  const [isMobile, setIsMobile]     = useState(false);
-  const [paused, setPaused]         = useState(false);
-  const touchStart                  = useRef(null);
-  const timerRef                    = useRef(null);
+  const [current, setCurrent]     = useState(0);
+  const [prev, setPrev]           = useState(null);
+  const [transitioning, setTrans] = useState(false);
+  const [isMobile, setIsMobile]   = useState(false);
+  const [paused, setPaused]       = useState(false);
+  const [progress, setProgress]   = useState(0);
 
-  /* ── device detection ── */
+  // ── Refs para evitar stale closures no intervalo ──────────
+  const currentRef     = useRef(0);
+  const transitionRef  = useRef(false);
+  const pausedRef      = useRef(false);
+  const timerRef       = useRef(null);
+  const rafRef         = useRef(null);
+  const touchStart     = useRef(null);
+  const totalRef       = useRef(desktopImages.length);
+
+  // Mantém refs sincronizadas
+  useEffect(() => { currentRef.current = current; }, [current]);
+  useEffect(() => { transitionRef.current = transitioning; }, [transitioning]);
+  useEffect(() => { pausedRef.current = paused; }, [paused]);
+
+  /* ── Device detection ──────────────────────────────────── */
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
+    const check = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      totalRef.current = mobile ? mobileImages.length : desktopImages.length;
+    };
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
@@ -40,25 +57,49 @@ export default function Hero() {
   const images = isMobile ? mobileImages : desktopImages;
   const total  = images.length;
 
-  /* ── slide change ── */
+  /* ── Função de troca de slide ──────────────────────────── */
   const goTo = useCallback((idx) => {
-    if (transitioning) return;
+    if (transitionRef.current) return;
+    transitionRef.current = true;
     setTrans(true);
-    setPrev(current);
+    setPrev(currentRef.current);
     setCurrent(idx);
-    setTimeout(() => { setPrev(null); setTrans(false); }, TRANSITION_MS);
-  }, [transitioning, current]);
+    currentRef.current = idx;
+    setTimeout(() => {
+      setPrev(null);
+      setTrans(false);
+      transitionRef.current = false;
+    }, TRANSITION_MS);
+  }, []);
 
-  const next = useCallback(() => goTo((current + 1) % total), [goTo, current, total]);
-
-  /* ── auto-advance ── */
+  /* ── Auto-advance com refs (sem dependência de `next`) ─── */
   useEffect(() => {
-    if (paused) return;
-    timerRef.current = setInterval(next, INTERVAL);
-    return () => clearInterval(timerRef.current);
-  }, [next, paused]);
+    const startInterval = () => {
+      clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        if (pausedRef.current) return;
+        const nextIdx = (currentRef.current + 1) % totalRef.current;
+        goTo(nextIdx);
+      }, INTERVAL);
+    };
 
-  /* ── scroll to ── */
+    startInterval();
+    return () => clearInterval(timerRef.current);
+  }, [goTo]); // goTo é estável (useCallback sem deps que mudam)
+
+  /* ── Reinicia o intervalo ao trocar de slide manualmente ─ */
+  const goToManual = useCallback((idx) => {
+    goTo(idx);
+    // Reinicia o timer para não cortar o slide recém-escolhido
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      if (pausedRef.current) return;
+      const nextIdx = (currentRef.current + 1) % totalRef.current;
+      goTo(nextIdx);
+    }, INTERVAL);
+  }, [goTo]);
+
+  /* ── Scroll suave ──────────────────────────────────────── */
   const scrollTo = useCallback((href) => {
     const el = document.querySelector(href);
     if (!el) return;
@@ -66,29 +107,38 @@ export default function Hero() {
     window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
   }, []);
 
-  /* ── touch swipe ── */
+  /* ── Touch swipe ───────────────────────────────────────── */
   const onTouchStart = (e) => { touchStart.current = e.touches[0].clientX; };
   const onTouchEnd   = (e) => {
     if (touchStart.current === null) return;
     const dx = e.changedTouches[0].clientX - touchStart.current;
-    if (Math.abs(dx) > 40) goTo(dx < 0 ? (current + 1) % total : (current - 1 + total) % total);
+    if (Math.abs(dx) > 40) {
+      const t = totalRef.current;
+      goToManual(dx < 0
+        ? (currentRef.current + 1) % t
+        : (currentRef.current - 1 + t) % t
+      );
+    }
     touchStart.current = null;
   };
 
-  /* ── progress bar width ── */
-  const [progress, setProgress] = useState(0);
+  /* ── Barra de progresso (RAF) ──────────────────────────── */
   useEffect(() => {
     setProgress(0);
-    if (paused) return;
+    cancelAnimationFrame(rafRef.current);
+
     const start = performance.now();
-    let raf;
     const tick = (now) => {
-      setProgress(Math.min(((now - start) / INTERVAL) * 100, 100));
-      raf = requestAnimationFrame(tick);
+      if (!pausedRef.current) {
+        const pct = Math.min(((now - start) / INTERVAL) * 100, 100);
+        setProgress(pct);
+      }
+      rafRef.current = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [current, paused]);
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [current]); // reinicia a cada slide
 
   return (
     <section
@@ -102,7 +152,7 @@ export default function Hero() {
       {/* ── Slides ── */}
       <div className="hero-carousel" aria-live="polite" aria-atomic="true">
 
-        {/* slide saindo */}
+        {/* Slide saindo */}
         {prev !== null && (
           <div className="hero-slide hero-slide--out" key={`out-${prev}`}>
             <img
@@ -114,18 +164,18 @@ export default function Hero() {
           </div>
         )}
 
-        {/* slide entrando */}
+        {/* Slide entrando */}
         <div className="hero-slide hero-slide--in" key={`in-${current}`}>
           <img
             src={images[current].src}
             alt={images[current].alt}
-            className="hero-bg-image hero-bg-image--ken"
+            className="hero-bg-image"
             loading="eager"
           />
           <div className="hero-slide-overlay" />
         </div>
 
-        {/* pré-carrega próximo */}
+        {/* Pré-carrega próximo slide */}
         <link rel="preload" as="image" href={images[(current + 1) % total].src} />
       </div>
 
@@ -162,14 +212,15 @@ export default function Hero() {
       </div>
 
       {/* ── Dots + progress ── */}
-      <div className="hero-nav">
+      <nav className="hero-nav" aria-label="Navegação de slides">
         <div className="hero-dots">
           {images.map((_, i) => (
             <button
               key={i}
               className={`hero-dot ${i === current ? 'active' : ''}`}
-              onClick={() => goTo(i)}
-              aria-label={`Slide ${i + 1}`}
+              onClick={() => goToManual(i)}
+              aria-label={`Ir para slide ${i + 1}`}
+              aria-current={i === current ? 'true' : undefined}
             >
               {i === current && (
                 <span
@@ -180,7 +231,7 @@ export default function Hero() {
             </button>
           ))}
         </div>
-      </div>
+      </nav>
 
     </section>
   );
