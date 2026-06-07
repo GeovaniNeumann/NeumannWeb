@@ -21,124 +21,163 @@ const INTERVAL = 6000;
 const TRANSITION_MS = 900;
 
 export default function Hero() {
-  const [current, setCurrent]     = useState(0);
-  const [prev, setPrev]           = useState(null);
-  const [transitioning, setTrans] = useState(false);
-  const [isMobile, setIsMobile]   = useState(false);
-  const [paused, setPaused]       = useState(false);
-  const [progress, setProgress]   = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [prev, setPrev] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  // ── Refs para evitar stale closures no intervalo ──────────
-  const currentRef     = useRef(0);
-  const transitionRef  = useRef(false);
-  const pausedRef      = useRef(false);
-  const timerRef       = useRef(null);
-  const rafRef         = useRef(null);
-  const touchStart     = useRef(null);
-  const totalRef       = useRef(desktopImages.length);
+  // Refs para valores que precisam ser acessados dentro do timer sem causar re-renderização
+  const currentRef = useRef(current);
+  const pausedRef = useRef(paused);
+  const transitioningRef = useRef(false);
+  const timerRef = useRef(null);
+  const rafRef = useRef(null);
+  const touchStartRef = useRef(null);
+  const preloadedRef = useRef(new Set());
 
-  // Mantém refs sincronizadas
+  // Sincroniza refs com os estados
   useEffect(() => { currentRef.current = current; }, [current]);
-  useEffect(() => { transitionRef.current = transitioning; }, [transitioning]);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
 
-  /* ── Device detection ──────────────────────────────────── */
+  // Detecta mobile
   useEffect(() => {
-    const check = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      totalRef.current = mobile ? mobileImages.length : desktopImages.length;
-    };
+    const check = () => setIsMobile(window.innerWidth <= 768);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
 
   const images = isMobile ? mobileImages : desktopImages;
-  const total  = images.length;
+  const total = images.length;
 
-  /* ── Função de troca de slide ──────────────────────────── */
-  const goTo = useCallback((idx) => {
-    if (transitionRef.current) return;
-    transitionRef.current = true;
-    setTrans(true);
-    setPrev(currentRef.current);
-    setCurrent(idx);
-    currentRef.current = idx;
-    setTimeout(() => {
-      setPrev(null);
-      setTrans(false);
-      transitionRef.current = false;
-    }, TRANSITION_MS);
+  // Pré-carregamento de imagens (sem warnings)
+  const preloadImage = useCallback((src) => {
+    if (!src || preloadedRef.current.has(src)) return;
+    const img = new Image();
+    img.src = src;
+    preloadedRef.current.add(src);
   }, []);
 
-  /* ── Auto-advance com refs (sem dependência de `next`) ─── */
+  // Função que troca o slide (sem depender de closures stale)
+  const goTo = useCallback((newIndex) => {
+    if (transitioningRef.current) return;
+    const safeIndex = ((newIndex % total) + total) % total;
+    if (safeIndex === currentRef.current) return;
+
+    transitioningRef.current = true;
+    setPrev(currentRef.current);
+    setCurrent(safeIndex);
+    currentRef.current = safeIndex;
+
+    setTimeout(() => {
+      setPrev(null);
+      transitioningRef.current = false;
+    }, TRANSITION_MS);
+  }, [total]);
+
+  // Avançar
+  const goToNext = useCallback(() => {
+    if (transitioningRef.current) return;
+    goTo((currentRef.current + 1) % total);
+  }, [goTo, total]);
+
+  // Voltar
+  const goToPrev = useCallback(() => {
+    if (transitioningRef.current) return;
+    goTo((currentRef.current - 1 + total) % total);
+  }, [goTo, total]);
+
+  // Timer único que nunca é recriado (inicia e limpa apenas no mount/unmount e quando pausa/despausa)
   useEffect(() => {
-    const startInterval = () => {
-      clearInterval(timerRef.current);
+    const startTimer = () => {
+      if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
-        if (pausedRef.current) return;
-        const nextIdx = (currentRef.current + 1) % totalRef.current;
-        goTo(nextIdx);
+        if (!pausedRef.current && !transitioningRef.current) {
+          goToNext();
+        }
       }, INTERVAL);
     };
 
-    startInterval();
-    return () => clearInterval(timerRef.current);
-  }, [goTo]); // goTo é estável (useCallback sem deps que mudam)
+    startTimer();
 
-  /* ── Reinicia o intervalo ao trocar de slide manualmente ─ */
-  const goToManual = useCallback((idx) => {
-    goTo(idx);
-    // Reinicia o timer para não cortar o slide recém-escolhido
-    clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      if (pausedRef.current) return;
-      const nextIdx = (currentRef.current + 1) % totalRef.current;
-      goTo(nextIdx);
-    }, INTERVAL);
-  }, [goTo]);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [goToNext]); // goToNext é estável, então o timer só inicia/limpa uma vez
 
-  /* ── Scroll suave ──────────────────────────────────────── */
+  // Pausa/retoma o timer sem recriar (usando ref)
+  useEffect(() => {
+    if (paused) {
+      if (timerRef.current) clearInterval(timerRef.current);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        if (!pausedRef.current && !transitioningRef.current) {
+          goToNext();
+        }
+      }, INTERVAL);
+    }
+  }, [paused, goToNext]);
+
+  // Pré-carrega imagens seguintes
+  useEffect(() => {
+    const nextSrc = images[(current + 1) % total].src;
+    const nextNextSrc = images[(current + 2) % total].src;
+    preloadImage(nextSrc);
+    preloadImage(nextNextSrc);
+  }, [current, images, total, preloadImage]);
+
+  // Pré-carrega todas no início
+  useEffect(() => {
+    [...desktopImages, ...mobileImages].forEach(img => preloadImage(img.src));
+  }, [preloadImage]);
+
+  // Barra de progresso (RAF)
+  useEffect(() => {
+    setProgress(0);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+    const startTime = performance.now();
+    const update = (now) => {
+      if (!pausedRef.current) {
+        const elapsed = now - startTime;
+        const pct = Math.min((elapsed / INTERVAL) * 100, 100);
+        setProgress(pct);
+      }
+      rafRef.current = requestAnimationFrame(update);
+    };
+    rafRef.current = requestAnimationFrame(update);
+
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [current, paused]);
+
+  // Scroll suave
   const scrollTo = useCallback((href) => {
     const el = document.querySelector(href);
     if (!el) return;
-    const offset = document.getElementById('header')?.offsetHeight ?? 64;
+    const header = document.getElementById('header');
+    const offset = header ? header.offsetHeight : 64;
     window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
   }, []);
 
-  /* ── Touch swipe ───────────────────────────────────────── */
-  const onTouchStart = (e) => { touchStart.current = e.touches[0].clientX; };
-  const onTouchEnd   = (e) => {
-    if (touchStart.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStart.current;
-    if (Math.abs(dx) > 40) {
-      const t = totalRef.current;
-      goToManual(dx < 0
-        ? (currentRef.current + 1) % t
-        : (currentRef.current - 1 + t) % t
-      );
+  // Swipe touch
+  const handleTouchStart = (e) => { touchStartRef.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e) => {
+    if (touchStartRef.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartRef.current;
+    if (Math.abs(deltaX) > 40) {
+      if (deltaX < 0) goToNext();
+      else goToPrev();
     }
-    touchStart.current = null;
+    touchStartRef.current = null;
   };
 
-  /* ── Barra de progresso (RAF) ──────────────────────────── */
-  useEffect(() => {
-    setProgress(0);
-    cancelAnimationFrame(rafRef.current);
-
-    const start = performance.now();
-    const tick = (now) => {
-      if (!pausedRef.current) {
-        const pct = Math.min(((now - start) / INTERVAL) * 100, 100);
-        setProgress(pct);
-      }
-      rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [current]); // reinicia a cada slide
+  // Navegação manual
+  const goToManual = useCallback((index) => {
+    if (transitioningRef.current) return;
+    goTo(index);
+  }, [goTo]);
 
   return (
     <section
@@ -146,93 +185,61 @@ export default function Hero() {
       className="hero"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
-      {/* ── Slides ── */}
       <div className="hero-carousel" aria-live="polite" aria-atomic="true">
-
-        {/* Slide saindo */}
         {prev !== null && (
           <div className="hero-slide hero-slide--out" key={`out-${prev}`}>
-            <img
-              src={images[prev].src}
-              alt={images[prev].alt}
-              className="hero-bg-image"
-            />
+            <img src={images[prev].src} alt={images[prev].alt} className="hero-bg-image" loading="eager" />
             <div className="hero-slide-overlay" />
           </div>
         )}
-
-        {/* Slide entrando */}
         <div className="hero-slide hero-slide--in" key={`in-${current}`}>
-          <img
-            src={images[current].src}
-            alt={images[current].alt}
-            className="hero-bg-image"
-            loading="eager"
-          />
+          <img src={images[current].src} alt={images[current].alt} className="hero-bg-image" loading="eager" />
           <div className="hero-slide-overlay" />
         </div>
-
-        {/* Pré-carrega próximo slide */}
-        <link rel="preload" as="image" href={images[(current + 1) % total].src} />
       </div>
 
-      {/* ── Conteúdo ── */}
       <div className="hero-content">
         <span className="hero-eyebrow">
           <span className="hero-eyebrow-line" />
           Desenvolvimento Web
         </span>
-
         <h1 className="hero-title">
           Sua empresa<br />
           <span className="text-neon-gradient">no mundo digital</span>
         </h1>
-
         <div className="hero-actions">
-          <button
-            className="hero-btn-primary"
-            onClick={() => scrollTo('#contato')}
-          >
+          <button className="hero-btn-primary" onClick={() => scrollTo('#contato')}>
             Iniciar Projeto
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-
-          <button
-            className="hero-btn-ghost"
-            onClick={() => scrollTo('#portfolio')}
-          >
+          <button className="hero-btn-ghost" onClick={() => scrollTo('#portfolio')}>
             Ver Portfólio
           </button>
         </div>
       </div>
 
-      {/* ── Dots + progress ── */}
       <nav className="hero-nav" aria-label="Navegação de slides">
         <div className="hero-dots">
-          {images.map((_, i) => (
+          {images.map((_, index) => (
             <button
-              key={i}
-              className={`hero-dot ${i === current ? 'active' : ''}`}
-              onClick={() => goToManual(i)}
-              aria-label={`Ir para slide ${i + 1}`}
-              aria-current={i === current ? 'true' : undefined}
+              key={index}
+              className={`hero-dot ${index === current ? 'active' : ''}`}
+              onClick={() => goToManual(index)}
+              aria-label={`Ir para slide ${index + 1}`}
+              aria-current={index === current ? 'true' : undefined}
             >
-              {i === current && (
-                <span
-                  className="hero-dot-progress"
-                  style={{ width: `${progress}%` }}
-                />
+              {index === current && (
+                <span className="hero-dot-progress" style={{ width: `${progress}%` }} />
               )}
             </button>
           ))}
         </div>
       </nav>
-
     </section>
   );
 }
